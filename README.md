@@ -248,12 +248,7 @@ Geralmente, quando se faz uma requisição para um serviço usando Istio, o tipo
  - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/deploy/installation/
  - https://istio.io/latest/docs/setup/getting-started/
 
-
-
-$
-
-
-Desde SCM>Jenkins>Rancher para o serviço keyttis gerenciado da AWS o EKS. 
+[]
 
 Os passos-time são os seguintes:
 
