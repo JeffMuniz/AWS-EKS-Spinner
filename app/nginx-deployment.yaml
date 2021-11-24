@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-nginx
+  namespace: ns-nginx
+  labels:
+    app: app-nginx
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-nginx
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: app-nginx
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: VAR_EX
+          value: "8080"
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: DB_HOST
+              name: secret-nginx
+              optional: false
+        - name: ISSUER_ID
+          valueFrom:
+            configMapKeyRef:
+              key: ISSUER_ID
+              name: configmap-nginx
+        name: app-nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred

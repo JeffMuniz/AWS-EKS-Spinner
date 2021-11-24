@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-nginx-service
+  namespace: ng-nginx
+  labels:
+    app: app-nginx
+spec:
+  ports:
+  - port: 80 # Porta que vai ser exposta
+    name: http
+    protocol: TCP
+    targetPort: 80 # Porta que roda o container
+  selector:
+    app: app-nginx
+  type: ClusterIP

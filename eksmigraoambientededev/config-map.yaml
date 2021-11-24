@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: <<NOME DA CONFIGMAP>>
+  namespace: <<NOME DO NAMESPACE>>
+data:
+  EXEMPLO_CONFIG-MAP_1: 'valor1'
+  EXEMPLO_CONFIG-MAP_2: 'valor2'

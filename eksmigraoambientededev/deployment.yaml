@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{PROJECT_NAME}}-service
+  namespace: {{NAMESPACE}}
+  labels:
+    app: {{PROJECT_NAME}}
+    service: {{PROJECT_NAME}}-service
+spec:
+  ports:
+  - port: <<PORTA DA APLICAÇÃO/PROJETO>>
+    name: http
+  selector:
+    app: {{PROJECT_NAME}}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{PROJECT_NAME}}-virtualservice
+  namespace: {{NAMESPACE}}
+spec:
+  gateways:
+    - default/istio-gateway
+  hosts:
+    - "<<NOME COMO ESTÁ NO IGRESS DO RANCHER>>.itpreprodb.com"
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+      - destination:
+          host: {{PROJECT_NAME}}-service.{{NAMESPACE}}.svc.cluster.local
+          subset: v1
+          port:
+            number: <<PORTA DA APLICAÇÃO/PROJETO>>
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{PROJECT_NAME}}-dn
+  namespace: {{NAMESPACE}}
+spec:
+  host: {{PROJECT_NAME}}-service.{{NAMESPACE}}.svc.cluster.local
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{PROJECT_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    app: {{PROJECT_NAME}}
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{PROJECT_NAME}}
+      app: {{PROJECT_NAME}}
+      version: v1
+  template:
+    metadata:
+      labels:
+        name: {{PROJECT_NAME}}
+        app: {{PROJECT_NAME}}
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: <<EXEMPLO_VAR_1>>
+          value: <<VALOR>>
+        - name: <<EXEMPLO_VAR_CONFIG-MAP>>
+          valueFrom:
+            configMapKeyRef:
+              key: <<EXEMPLO_CONFIG-MAP_1>>
+              name: <<NOME DA CONFIGMAP>>
+        - name: <<EXEMPLO_VAR_SECRET_1>>
+          valueFrom:
+            secretKeyRef:
+              key: <<EXEMPLO_SECRET_1>>
+              name: {{PROJECT_NAME}}
+              optional: false
+        name: {{PROJECT_NAME}}
+        image: <<CONFIGURAR CONFORME ESTÁ NO JENKINSFILE>>
+        ports:
+        - containerPort: <<PORTA DA APLICAÇÃO/PROJETO>>
+        imagePullPolicy: Always

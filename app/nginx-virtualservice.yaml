@@ -1,0 +1,21 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: app-nginx-virtualservice
+  namespace: ns-nginx
+spec:
+  gateways:
+    - default/istio-gateway
+  hosts:
+    - "<SEU HOST AQUI>" # O host que vai responder por esse serviço
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+      - destination:
+          host: app-nginx-service.ns-nginx.svc.cluster.local
+          subset: v1
+          port:
+            number: 80
